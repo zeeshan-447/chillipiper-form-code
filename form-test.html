@@ -1,0 +1,23 @@
+<script src="https://js.chilipiper.com/marketing.js" type="text/javascript"></script>
+<script>
+var cpTenantDomain = "packagex"; // replace with your subdomain
+var cpRouterName = "test-inbound-router"; // replace with the router's name
+var lead;
+window.addEventListener("message", function (event) {
+   if (event.data.type === "hsFormCallback") {
+       console.log(event.data);
+       if (event.data.eventName === "onFormSubmit") {
+           console.log("onFormSubmit");
+           window.lead = {};
+           for (var key in event.data.data) {
+               if (Array.isArray(event.data.data[key].value)) {event.data.data[key].value = event.data.data[key].value.toString().replace(",",";");}
+               lead[event.data.data[key].name] = event.data.data[key].value;
+           }
+           if(Object.keys(lead).length <= 1){lead = event.data.data;}
+       } else if (event.data.eventName === "onFormSubmitted") {
+           console.log("onFormSubmitted"); console.log(lead);
+           ChiliPiper.submit(cpTenantDomain, cpRouterName, {title: "Thanks! What time works best for a quick call?",map:true,lead:lead});
+       }
+   }
+});
+</script>
